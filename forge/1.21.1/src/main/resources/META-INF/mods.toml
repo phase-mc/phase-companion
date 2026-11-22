@@ -1,0 +1,31 @@
+# Phase Companion for Forge. Reference: https://docs.minecraftforge.net/en/1.21.x/gettingstarted/modfiles/
+modLoader="javafml"
+loaderVersion="[0,)"
+license="MPL-2.0"
+issueTrackerURL="https://github.com/phase-mc/phase-companion/issues"
+
+[[mods]]
+modId="phase_companion"
+version="${version}"
+displayName="Phase Companion"
+displayURL="https://github.com/phase-mc/phase-companion"
+authors="Phase"
+# Server-only mod (the host's integrated server): guests should not have it, and in the
+# server list a guest without the mod does not see a red cross. The value comes from the Forge docs
+# ("Sides": "This is what you should use if you're a server only mod").
+displayTest="IGNORE_SERVER_VERSION"
+description='''Companion to the Phase LAN app: real Tab header, instant name colors and prefixes, up to 50 players in an Open to LAN world. Host only, guests need nothing.'''
+
+[[dependencies.phase_companion]]
+    modId="forge"
+    mandatory=true
+    versionRange="${forge}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.phase_companion]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${mc}"
+    ordering="NONE"
+    side="BOTH"

@@ -1,0 +1,37 @@
+plugins {
+	id 'java'
+	// ModDevGradle: since 1.20.5 NeoForge uses Mojang names, so no remapping and no refmap.
+	id 'net.neoforged.moddev' version "${moddev_version}"
+}
+
+apply from: rootProject.file('loader.gradle')
+
+neoForge {
+	version = project.neoforge_version
+}
+
+repositories {
+	mavenCentral()
+}
+
+// Mixin check against game classes (common/src/test), shared by Forge and NeoForge.
+sourceSets.test.java.srcDir(rootProject.file('common/src/test/java'))
+dependencies {
+	testImplementation "org.ow2.asm:asm-tree:${project.asm_version}"
+	testImplementation "com.google.code.gson:gson:${project.gson_version}"
+}
+// ModDevGradle puts the game on the test classpath only together with a game launch (unitTest); the test only needs
+// the bytecode of the game classes, the same ones the mod is built against.
+sourceSets.test.runtimeClasspath += sourceSets.main.compileClasspath
+
+processResources {
+	def props = [
+		version: "${project.mod_version}+neoforge.${project.minecraft_version}",
+		neoforge: project.neoforge_range,
+		mc: project.minecraft_range,
+	]
+	inputs.properties props
+	filesMatching('META-INF/neoforge.mods.toml') {
+		expand props
+	}
+}

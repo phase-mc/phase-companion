@@ -1,0 +1,33 @@
+// Shared part of the Fabric adapter builds. Applied from fabric/<version>/build.gradle
+// after the Loom plugin; whatever is the same for all loaders lives in loader.gradle.
+
+apply from: rootProject.file('loader.gradle')
+
+def fabricCommon = rootProject.file('fabric/common/src')
+sourceSets.main {
+	java.srcDir(new File(fabricCommon, 'main/java'))
+	resources.srcDir(new File(fabricCommon, 'main/resources'))
+}
+sourceSets.test {
+	java.srcDir(new File(fabricCommon, 'test/java'))
+}
+
+dependencies {
+	// Fabric API is not needed: the mod relies on the loader and mixins, so a new game version
+	// can be supported on release day without waiting for Fabric API.
+
+	// The test starts the game through the Fabric loader without a window, so mixins are really applied.
+	testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+}
+
+processResources {
+	def props = [
+		version: "${project.mod_version}+fabric.${project.minecraft_version}",
+		mc: project.minecraft_range,
+		java: project.java_version,
+	]
+	inputs.properties props
+	filesMatching('fabric.mod.json') {
+		expand props
+	}
+}

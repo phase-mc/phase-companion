@@ -1,0 +1,47 @@
+name: release
+
+# A v* tag (for example v0.1.0) builds the mod and publishes a release: jars and companion.json.
+# Phase takes companion.json from the latest release and installs the mod for the host in one click.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install blake3
+      - name: Test and build
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+      - name: Collect jars
+        # Each <loader>/<game version> adapter (fabric, forge, neoforge) names its jar
+        # as in the release: phase-companion-<loader>-<game version>-<mod version>.jar.
+        # Gradle runs on Java 25, which ForgeGradle also uses to run its tools; the 1.21.1
+        # jars are built for Java 21 (options.release), and Gradle downloads any missing Java itself.
+        run: |
+          mkdir dist
+          for loader in fabric forge neoforge; do
+            cp $loader/*/build/libs/phase-companion-$loader-*.jar dist/
+          done
+          ls -l dist
+          # One jar per adapter: no loader silently drops out of the release.
+          test "$(ls dist/*.jar | wc -l)" -eq "$(ls -d {fabric,forge,neoforge}/*/build.gradle | wc -l)"
+      - name: Manifest
+        run: python tools/make_manifest.py "$GITHUB_REPOSITORY" "$GITHUB_REF_NAME" dist
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --title "Phase Companion $GITHUB_REF_NAME" --generate-notes

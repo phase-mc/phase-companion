@@ -1,0 +1,49 @@
+plugins {
+	id 'java'
+	// ForgeGradle 7: since Forge 1.20.6 the game uses Mojang names both in the jar and at runtime, so there is no
+	// name remapping (reobf) and no refmap; mixins are written with the same names as on Fabric.
+	id 'net.minecraftforge.gradle' version "${forgegradle_version}"
+}
+
+apply from: rootProject.file('loader.gradle')
+
+minecraft {
+	mappings channel: 'official', version: project.minecraft_version
+}
+
+repositories {
+	minecraft.mavenizer(it)
+	maven fg.forgeMaven
+	maven fg.minecraftLibsMaven
+	mavenCentral()
+}
+
+dependencies {
+	implementation minecraft.dependency("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
+}
+
+// Mixin check against game classes (common/src/test), shared by Forge and NeoForge.
+sourceSets.test.java.srcDir(rootProject.file('common/src/test/java'))
+dependencies {
+	testImplementation "org.ow2.asm:asm-tree:${project.asm_version}"
+	testImplementation "com.google.code.gson:gson:${project.gson_version}"
+}
+
+processResources {
+	def props = [
+		version: "${project.mod_version}+forge.${project.minecraft_version}",
+		forge: project.forge_range,
+		mc: project.minecraft_range,
+	]
+	inputs.properties props
+	filesMatching('META-INF/mods.toml') {
+		expand props
+	}
+}
+
+jar {
+	manifest {
+		// Forge finds the mod's mixin list only through this attribute.
+		attributes 'MixinConfigs': 'phase_companion.mixins.json'
+	}
+}

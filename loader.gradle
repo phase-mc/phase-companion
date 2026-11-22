@@ -1,0 +1,52 @@
+// Shared part of every adapter build: <loader>/<game version>/build.gradle applies it
+// after its own loader plugin. Game version and Java are in the version folder's gradle.properties.
+//
+// The mod sources come from three places:
+//   common/src                 - game code shared by all loaders and versions (Companion);
+//   common/<game version>/src  - what is specific to a game version but identical across loaders
+//                                (mixins on game classes, TeamColors);
+//   <loader>/...               - the loader's entry point, metadata and mixin list.
+
+// The loader name is the parent folder's name: fabric, forge, neoforge.
+def loaderName = project.parent.name
+ext.loaderName = loaderName
+
+group = project.maven_group
+version = project.mod_version
+base {
+	// File name as in the release: phase-companion-<loader>-<game version>-<mod version>.jar.
+	archivesName = "phase-companion-${loaderName}-${project.minecraft_version}"
+}
+
+def shared = rootProject.file('common')
+sourceSets.main.java {
+	srcDir(new File(shared, 'src/main/java'))
+	srcDir(new File(shared, "${project.minecraft_version}/src/main/java"))
+}
+
+dependencies {
+	implementation project(':core')
+	testImplementation platform("org.junit:junit-bom:${project.junit_version}")
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = project.java_version as int
+	it.options.encoding = 'UTF-8'
+}
+
+jar {
+	// core is part of the mod: its classes go into the same jar.
+	from(project(':core').sourceSets.main.output)
+	from(rootProject.file('LICENSE')) {
+		rename { 'LICENSE_phase_companion' }
+	}
+	manifest {
+		attributes 'Implementation-Version': project.mod_version
+	}
+}

@@ -1,0 +1,12 @@
+plugins {
+	// 1.21.1 ships obfuscated: Loom remaps the names, and the code is written against Mojang mappings.
+	id 'net.fabricmc.fabric-loom-remap'
+}
+
+apply from: rootProject.file('fabric/fabric.gradle')
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+}

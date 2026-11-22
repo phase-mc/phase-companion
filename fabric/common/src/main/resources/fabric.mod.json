@@ -1,0 +1,21 @@
+{
+	"schemaVersion": 1,
+	"id": "phase_companion",
+	"version": "${version}",
+	"name": "Phase Companion",
+	"description": "Companion to the Phase LAN app: real Tab header, instant name colors and prefixes, up to 50 players in an Open to LAN world. Host only, guests need nothing.",
+	"authors": ["Phase"],
+	"contact": {
+		"homepage": "https://phase.yeskendir.com",
+		"sources": "https://github.com/phase-mc/phase-companion",
+		"issues": "https://github.com/phase-mc/phase-companion/issues"
+	},
+	"license": "MPL-2.0",
+	"environment": "*",
+	"mixins": ["phase_companion.mixins.json"],
+	"depends": {
+		"fabricloader": ">=0.17.0",
+		"minecraft": "${mc}",
+		"java": ">=${java}"
+	}
+}
