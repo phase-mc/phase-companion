@@ -31,7 +31,7 @@ dependencies {
 
 processResources {
 	def props = [
-		version: "${project.mod_version}+forge.${project.minecraft_version}",
+		version: "${project.mod_version}+forge.${project.name}",
 		forge: project.forge_range,
 		mc: project.minecraft_range,
 	]

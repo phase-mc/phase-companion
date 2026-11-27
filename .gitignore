@@ -3,3 +3,5 @@ build/
 run/
 */build/
 */run/
+# The game bootstrap in unit tests writes logs/latest.log into the adapter folder.
+*/*/logs/

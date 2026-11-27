@@ -7,21 +7,33 @@
 //                                (mixins on game classes, TeamColors);
 //   <loader>/...               - the loader's entry point, metadata and mixin list.
 
+//
+// One jar serves several game versions (minecraft_versions in the version folder's
+// gradle.properties). The folder name is the code line: it names the jar and picks
+// common/<folder>. minecraft_version is the game the jar is compiled and tested against;
+// to check another version of the range, override it for one adapter:
+//   ./gradlew --configure-on-demand -Pminecraft_version=1.21 :fabric:1.21.1:test
+
+// The jar takes core's classes, so core is configured first (also with --configure-on-demand).
+evaluationDependsOn(':core')
+
 // The loader name is the parent folder's name: fabric, forge, neoforge.
 def loaderName = project.parent.name
 ext.loaderName = loaderName
+// The code line: the version folder's name (1.21.1, 26.3).
+def codeLine = project.name
 
 group = project.maven_group
 version = project.mod_version
 base {
-	// File name as in the release: phase-companion-<loader>-<game version>-<mod version>.jar.
-	archivesName = "phase-companion-${loaderName}-${project.minecraft_version}"
+	// File name as in the release: phase-companion-<loader>-<code line>-<mod version>.jar.
+	archivesName = "phase-companion-${loaderName}-${codeLine}"
 }
 
 def shared = rootProject.file('common')
 sourceSets.main.java {
 	srcDir(new File(shared, 'src/main/java'))
-	srcDir(new File(shared, "${project.minecraft_version}/src/main/java"))
+	srcDir(new File(shared, "${codeLine}/src/main/java"))
 }
 
 dependencies {

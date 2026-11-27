@@ -27,8 +27,9 @@ jobs:
           chmod +x gradlew
           ./gradlew build
       - name: Collect jars
-        # Each <loader>/<game version> adapter (fabric, forge, neoforge) names its jar
-        # as in the release: phase-companion-<loader>-<game version>-<mod version>.jar.
+        # Each <loader>/<code line> adapter (fabric, forge, neoforge) names its jar
+        # as in the release: phase-companion-<loader>-<code line>-<mod version>.jar; the manifest
+        # lists every game version of the adapter (minecraft_versions in its gradle.properties).
         # Gradle runs on Java 25, which ForgeGradle also uses to run its tools; the 1.21.1
         # jars are built for Java 21 (options.release), and Gradle downloads any missing Java itself.
         run: |

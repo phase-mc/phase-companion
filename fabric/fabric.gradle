@@ -22,7 +22,7 @@ dependencies {
 
 processResources {
 	def props = [
-		version: "${project.mod_version}+fabric.${project.minecraft_version}",
+		version: "${project.mod_version}+fabric.${project.name}",
 		mc: project.minecraft_range,
 		java: project.java_version,
 	]

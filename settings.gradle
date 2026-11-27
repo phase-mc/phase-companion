@@ -20,9 +20,11 @@ rootProject.name = 'phase-companion'
 
 // core is plain Java without Minecraft: the room.json format, validation, the apply plan.
 // common is game code shared by loaders: common/src for all game versions,
-// common/<game version> for what differs per version (mixins, TeamColors).
-// <loader>/<game version> are thin adapters: entry point, metadata, mixin list.
+// common/<code line> for what differs per code line (mixins, TeamColors).
+// <loader>/<code line> are thin adapters: entry point, metadata, mixin list. A code line is
+// named after the newest game version it is built against, and one jar serves a range
+// (minecraft_versions in its gradle.properties): 1.21.1 covers 1.21–1.21.1, 26.3 covers 26.1–26.3.
 include 'core',
 		'fabric:26.3', 'fabric:1.21.1',
 		'forge:1.21.1',
-		'neoforge:1.21.1'
+		'neoforge:26.3', 'neoforge:1.21.1'
